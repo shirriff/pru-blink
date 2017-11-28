@@ -1,11 +1,13 @@
-This is a sample "blink" demo using the PRU on the PocketBeagle.
+# Blink demo for PocketBeagle PRU microcontroller
+
+This is a simple "blink" demo using the PRU on the PocketBeagle.
 Note: it is designed to work with the 4.4.91 kernel; other kernels may have incompatible PRU APIs.
 
 To run this demo:
  * Copy the files to the PocketBeagle
  * Connect an LED to pin P1_33.
- * Run "config-pin P1_33 pruout"
- * As root, run "make install"
+ * Run "config-pin P1_33 pruout" to configure the pin as a PRU output.
+ * As root, run "make install" to compile the code, install it on the PRU and start the PRU running.
 
 This should flash the LED once per second. If you change the delay in blink.c from 100000000 to 1, the LED will flash at 4 MHz.
 
@@ -23,3 +25,14 @@ resource_table.h - this file defines resources used by the PRU. This is the defa
 
 This program is compiled from the command line. For more extensive use of the PRUs, you probably will want to use TI's CCS (Code Composer Studio) integrated development environment.
 I wrote about using CCS with the PRUs earlier [here](http://www.righto.com/2016/09/how-to-run-c-programs-on-beaglebones.html), but be warned that some things have changed since then.
+
+## Some internals
+
+The Makefile causes the file to be loaded into the PRU by copying it to =/lib/firmware/am335x-pru0-fw= and then restarting the pru_rproc driver.
+
+To stop the PRU, run the command:
+```
+ echo 4a334000.pru0 > /sys/bus/platform/drivers/pru-rproc/unbind
+```
+
+For more information on the PRU's libraries, see the [TI pages](http://processors.wiki.ti.com/index.php/PRU-ICSS_Remoteproc_and_RPMsg).
